@@ -129,16 +129,15 @@ class Handler {
   search(selectedNode, leftIdx, rightIdx, leftChar, rightChar = null) {
     rightChar = rightChar === null ? leftChar : rightChar;
 
-    if (leftChar === Keys.LINE_CHAR) {
-      return selectedNode.parentElement.innerText;
-    }
-
-    const { text, offset } = this.func(selectedNode);
+    const { text, offset } = this.getBaseTextAndOffset(selectedNode);
     leftIdx += offset;
     rightIdx += offset;
 
-    console.log(`text is ${text.substring(leftIdx, rightIdx)}`);
+    if (leftChar === Keys.LINE_CHAR) {
+      return text;
+    }
 
+    // console.log(`text is ${text.substring(leftIdx, rightIdx)}`);
     let leftBoundary = -1,
       rightBoundary = -1;
 
@@ -166,7 +165,7 @@ class Handler {
     return text.substring(leftBoundary, rightBoundary + 1);
   }
 
-  func(selectedNode) {
+  getBaseTextAndOffset(selectedNode) {
     const terminalNode = this.findFirstTerminalParentNode(selectedNode);
     const texts = [];
     let found = false;
