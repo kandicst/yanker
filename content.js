@@ -214,4 +214,4 @@ class Handler {
   }
 }
 
-xx = new Handler();
+new Handler();
