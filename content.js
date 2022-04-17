@@ -55,13 +55,11 @@ class Handler {
   command = new Command();
 
   constructor() {
-    window.addEventListener("keydown", (event) => {
-      console.log(event);
 
-      let selection = window.getSelection();
-      // this.func(selection.anchorNode);
+    window.addEventListener("keydown", (event) => {
+
       if (
-        selection.type === "Caret" ||
+        window.getSelection().type === "Caret" ||
         event.ctrlKey ||
         event.key === "Shift"
       ) {
@@ -105,9 +103,7 @@ class Handler {
     const selection = window.getSelection();
 
     try {
-      const { leftChar, rightChar } = getRightAndLeftChar(
-        this.command.character
-      );
+      const { leftChar, rightChar } = getRightAndLeftChar(this.command.character);
 
       const yankedText = this.search(
         selection.anchorNode,
@@ -137,7 +133,6 @@ class Handler {
       return text;
     }
 
-    // console.log(`text is ${text.substring(leftIdx, rightIdx)}`);
     let leftBoundary = -1,
       rightBoundary = -1;
 
