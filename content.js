@@ -55,9 +55,7 @@ class Handler {
   command = new Command();
 
   constructor() {
-
     window.addEventListener("keydown", (event) => {
-
       if (
         window.getSelection().type === "Caret" ||
         event.ctrlKey ||
@@ -103,7 +101,9 @@ class Handler {
     const selection = window.getSelection();
 
     try {
-      const { leftChar, rightChar } = getRightAndLeftChar(this.command.character);
+      const { leftChar, rightChar } = getRightAndLeftChar(
+        this.command.character
+      );
 
       const yankedText = this.search(
         selection.anchorNode,
@@ -112,9 +112,11 @@ class Handler {
         leftChar,
         rightChar
       );
-      navigator.clipboard.writeText(yankedText);
 
-      console.log(`yanked text is ${yankedText}`);
+      this.copyToClipboard(yankedText)
+        .then(() => console.log(`yanked text is ${yankedText}`))
+        .catch(() => console.log("error"));
+
     } catch (error) {
       console.log(error);
     }
@@ -200,6 +202,30 @@ class Handler {
     }
 
     return this.findFirstTerminalParentNode(node.parentNode);
+  }
+
+  copyToClipboard(textToCopy) {
+    // navigator clipboard api needs a secure context (https)
+    if (navigator.clipboard && window.isSecureContext) {
+      // navigator clipboard api method'
+      return navigator.clipboard.writeText(textToCopy);
+    } else {
+      // text area method
+      let textArea = document.createElement("textarea");
+      textArea.value = textToCopy;
+      // make the textarea out of viewport
+      textArea.style.position = "fixed";
+      textArea.style.left = "-999999px";
+      textArea.style.top = "-999999px";
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+      return new Promise((res, rej) => {
+        // here the magic happens
+        document.execCommand("copy") ? res() : rej();
+        textArea.remove();
+      });
+    }
   }
 
   reset() {
